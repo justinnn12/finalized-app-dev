@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Library Loan System - Update Product{% endblock %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+
+<h1 class="display-4">Update Product</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        {{ render_field(form.product_name, class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ render_field(form.description, class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ render_field(form.price, class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ render_field(form.category, class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ render_field(form.condition, class="form-control") }}
+    </div>
+    <div id="prof">
+        <div class="form-group">
+            {{ render_field(form.remarks, class="form-control") }}
+        </div>
+    </div>
+    <button type="submit" value="Submit" class="btn btn-primary">submit</button>
+</form>
+{% endblock %}

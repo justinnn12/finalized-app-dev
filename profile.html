@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Profile Page{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Profile of {{ username }}</h1>
+
+{% if order_number %}
+<div>
+    <h4>Recent Order</h4>
+    <p>Order Number: {{ order_number }}</p>
+    <a href="{{ url_for('order_details', order_number=order_number) }}" class="btn btn-info">View Order Details</a>
+</div>
+{% else %}
+<div>
+    <p>You have not placed an order yet.</p>
+</div>
+{% endif %}
+
+<!-- Username Change Section -->
+<div>
+  <h4>Change Username</h4>
+  <form action="{{ url_for('profile') }}" method="POST">
+    <div class="mb-3">
+      <label for="new_username" class="form-label">New Username</label>
+      <input type="text" class="form-control" id="new_username" name="new_username" value="{{ username }}" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Change Username</button>
+  </form>
+</div>
+
+<!-- Password Change Section -->
+<div>
+  <h4>Change Password</h4>
+  <form action="{{ url_for('profile') }}" method="POST">
+    <div class="mb-3">
+      <label for="new_password" class="form-label">New Password</label>
+      <input type="password" class="form-control" id="new_password" name="new_password" value="{{ password }}" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Change Password</button>
+  </form>
+</div>
+
+
+{% endblock %}

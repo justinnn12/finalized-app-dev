@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block title %}Library Loan System - Retrieve Products{% endblock %}
+
+{% block content %}
+<!--<h1 class="display-4">Products</h1>-->
+<style>
+    .search-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top:20px
+    }
+
+    #search-box {
+        width: 1000px;
+        border-radius: 5px
+    }
+
+    #search-button {
+        padding:15px 20px;
+        height: 100%;
+        border-radius: 5px;
+    }
+</style>
+
+<div class="search-container">
+    <form method="POST" action="{{ url_for('retrieve_products') }}" class="d-flex">
+        <input type="text" id="search-box" name="search" class="form-control" placeholder="Search for products..." value="{{ request.args.get('search', '') }}">
+        <button type="submit" id="search-button" class="btn btn-primary ms-2">Search</button>
+    </form>
+</div>
+
+{% if filtered_products == 'newspaper or paper' %}
+<h1 class="display-4">Newspaper/Paper</h1>
+{% elif filtered_products == 'cardboard' %}
+<h1 class="display-4">Cardboard</h1>
+{% elif filtered_products == 'clothing' %}
+<h1 class="display-4">Clothing</h1>
+{% elif filtered_products == 'metal recyclables' %}
+<h1 class="display-4">Metal Recyclables</h1>
+{% elif filtered_products == 'furniture' %}
+<h1 class="display-4">Furniture</h1>
+{% elif filtered_products == 'electronics' %}
+<h1 class="display-4">Electronic</h1>
+{% elif filtered_products == 'speakers' %}
+<h1 class="display-4">Speakers</h1>
+{% elif filtered_products == 'home' %}
+<h1 class="display-4">Home</h1>
+{% elif filtered_products == 'toys' %}
+<h1 class="display-4">Toys</h1>
+{% elif filtered_products == 'other' %}
+<h1 class="display-4">Others</h1>
+{% else %}
+<h1 class="display-4">All products</h1>
+{% endif %}
+
+
+
+<a href="{{ url_for('retrieve_products', role='customer' if role == 'staff' else 'staff') }}" class="btn btn-primary mb-3">
+    Switch to {{ 'Customer' if role == 'staff' else 'Staff' }} View
+</a>
+
+<div class="mb-3">
+    <a href="{{ url_for('retrieve_products') }}" class="btn btn-secondary">All</a>
+    <a href="{{ url_for('retrieve_products', category='newspaper or paper') }}" class="btn btn-secondary">Newspaper/Paper</a>
+    <a href="{{ url_for('retrieve_products', category='cardboard') }}" class="btn btn-secondary">Cardboard</a>
+    <a href="{{ url_for('retrieve_products', category='clothing') }}" class="btn btn-secondary">Clothing</a>
+    <a href="{{ url_for('retrieve_products', category='metal recyclables') }}" class="btn btn-secondary">Metal Recyclables</a>
+    <a href="{{ url_for('retrieve_products', category='furniture') }}" class="btn btn-secondary">Furniture</a>
+    <a href="{{ url_for('retrieve_products', category='electronics') }}" class="btn btn-secondary">Electronics</a>
+    <a href="{{ url_for('retrieve_products', category='speakers') }}" class="btn btn-secondary">Speakers</a>
+    <a href="{{ url_for('retrieve_products', category='home') }}" class="btn btn-secondary">Home</a>
+    <a href="{{ url_for('retrieve_products', category='toys') }}" class="btn btn-secondary">Toys</a>
+    <a href="{{ url_for('retrieve_products', category='other') }}" class="btn btn-secondary">Others</a>
+</div>
+
+<div>
+    {% if count == 0 %}
+    <p>There are no products.</p>
+    {% elif count == 1 %}
+    <p>There is 1 product.</p>
+    {% else %}
+    <p>There are {{ count }} products.</p>
+    {% endif %}
+</div>
+
+<!-- Product Grid Layout -->
+<div class="container-fluid">
+    <div class="row">
+        {% for product in product_list %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <a href="{{ url_for('view_product', id=product.get_product_id()) }}" style="text-decoration: none; color: inherit;">
+                    {% if product.get_image_filename() %}
+                        <img src="{{ url_for('static', filename='uploads/' + product.get_image_filename()) }}"
+                             class="card-img-top" alt="Product Image" style="height: 400px; object-fit: cover;">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='default.jpg') }}" class="card-img-top" alt="No Image" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ product.get_product_name() }}</h5>
+                        <p class="card-text text-success">${{ product.get_price() }}</p>
+                        <p class="card-text"><small class="text-muted">{{ product.get_condition() }}</small></p>
+                        {% if role == 'staff' %}
+                            <p class="card-text"><small class="text-muted">ID: {{ product.get_product_id() }}</small></p>
+                        {% endif %}
+
+                    </div>
+                </a>
+                <div class="card-footer text-center">
+                    {% if role == 'staff' %}
+                        <a href="/updateProduct/{{ product.get_product_id() }}" class="btn btn-warning">Update</a>
+                        <!-- Delete Button with Modal -->
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal_{{ product.get_product_id() }}">
+                            Delete
+                        </button>
+
+                        <!-- Delete Confirmation Modal -->
+                        <div class="modal fade" id="myModal_{{ product.get_product_id() }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Delete confirmation</h4>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete {{ product.get_product_name() }} (${{ product.get_price() }})?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form action="{{ url_for('delete_product', id=product.get_product_id()) }}" method="POST">
+                                            <input type="submit" value="Delete" class="btn btn-danger">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <form action="{{ url_for('add_to_cart', id=product.get_product_id()) }}" method="POST">
+                            <button type="submit" class="btn btn-primary">Add to Cart</button>
+                        </form>
+                    {% else %}
+                        <form action="{{ url_for('add_to_cart', id=product.get_product_id()) }}" method="POST">
+                            <button type="submit" class="btn btn-primary">Add to Cart</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<form action="{{ url_for('create_product') }}" method="POST">
+    <button type="submit" class="btn btn-primary">Want to create a product?</button>
+</form>
+
+{% endblock %}

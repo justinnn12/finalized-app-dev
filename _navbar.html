@@ -1,0 +1,60 @@
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/retrieveProducts">Karang Guni</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <ul class="navbar-nav">
+        <li>
+          <a class="nav-link" href="/createProduct">Create Product</a>
+        </li>
+        <li>
+          <a class="nav-link" href="/view_cart">View cart </a>
+        </li>
+        <li>
+          <a class="nav-link" href="/schedule_delivery">Schedule Delivery </a>
+        </li>
+        <li>
+          <a class="nav-link" href="/lookup_order">Look Up Order </a>
+        </li>
+        <li>
+          <a class="nav-link" href="/customer_details">Order details </a>
+        </li>
+
+        {% if role == 'staff' %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Manage
+                Products</a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/createItem">Add Item</a></li>
+                <li><a class="dropdown-item" href="/retrieveItems">Inventory</a></li>
+            </ul>
+        </li>
+        {% endif %}
+
+        <li>
+          <a class="nav-link" href="/createFeedback">Feedback</a>
+        </li>
+
+        {% if role == 'staff' %}
+        <li>
+          <a class="nav-link" href="retrieveFeedbacks">Retrieve feedback</a>
+        </li>
+        {% endif %}
+      </ul>
+
+      <!-- This container will push only the login/logout items to the right -->
+      <ul class="navbar-nav ms-auto">
+        {% if username %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('profile') }} " >Hello, {{ username }}</a>
+          </li>
+          <li><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+        {% else %}
+          <li><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

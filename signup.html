@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Library Loan System - Sign Up{% endblock %}
+
+{% block content %}
+
+<style>
+    .signup-container {
+        border: 1px solid #000000;
+        border-radius: 10px;
+        padding: 30px;
+        margin-top: 20px
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-md-6 signup-container">
+        <h1 class="display-4">Sign Up</h1>
+        <form action="{{ url_for('signup') }}" method="POST">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+        </form>
+
+        <div class="mt-3">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a>.</p>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ product.get_product_name() }} - Details{% endblock %}
+
+{% block content %}
+
+<style>
+    .image-container {
+        width: auto;  /* Fixed width */
+        height: auto; /* Fixed height */
+        background-color: #d3d3d3; /* Light gray background */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden; /* Prevents overflow if image is too large */
+        border-radius: 10px; /* Optional: Rounded corners */
+        position: relative;
+    }
+
+    .image-container img {
+        width: auto;
+        height:auto;
+        max-width: 100%; /* Ensures the image does not stretch beyond the box */
+        max-height: 100%; /* Ensures the image fits inside */
+        object-fit: contain; /* Keeps aspect ratio, showing gray if image is small */
+    }
+
+    .image-container:hover img {
+        transform: scale(2)
+    }
+
+</style>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Product Image -->
+        <div class="col-md-4">
+            <div class="image-container">
+                {% if product.get_image_filename() %}
+                    <img src="{{ url_for('static', filename='uploads/' + product.get_image_filename()) }}"
+                         class="img-fluid rounded" alt="Product Image">
+                {% else %}
+                    <img src="{{ url_for('static', filename='default.jpg') }}" class="img-fluid rounded" alt="No Image">
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-md-10">
+            <h1>{{ product.get_product_name() }}</h1>
+            <h3 class="text-success">${{ product.get_price() }}</h3>
+            <p><strong>Product ID: </strong>{{ product.get_product_id() }} </p>
+            <p><strong>Condition:</strong> {{ product.get_condition() }}</p>
+            <p><strong>Category:</strong> {{ product.get_category() }}</p>
+            <p><strong>Description:</strong> {{ product.get_description() }}</p>
+            <p><strong>Remarks:</strong> {{ product.get_remarks() }}</p>
+
+            <!-- Back Button -->
+            <a href="{{ url_for('retrieve_products') }}" class="btn btn-secondary mt-3">Back to Products</a>
+            <form action="{{ url_for('add_to_cart', id=product.get_product_id()) }}" method="POST">
+                            <button type="submit" class="btn btn-primary">Add to Cart</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
