@@ -33,6 +33,12 @@ class CreateFeedbackForm(Form):
     feedback = TextAreaField('Feedback', [validators.DataRequired()])
 
 
+class CreateReplyFeedbackForm(Form):
+    subject = StringField('Subject', [validators.Length(min=1, max=100), validators.DataRequired()])
+    recipient_email = EmailField('Recipient Email', [validators.DataRequired()])
+    message = TextAreaField('Message', [validators.DataRequired()])
+
+
 class CreateItemForm(Form):
     category = SelectField('Category', [validators.DataRequired()],
                            choices=[('', 'Select'), ('Newspapers or Paper', 'Newspaper or Paper'), ('Cardboard', 'Cardboard'),
