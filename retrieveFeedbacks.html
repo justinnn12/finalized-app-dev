@@ -11,6 +11,16 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     {{ session.pop('feedback_deleted', None) }} was deleted.
 </div>
+{% elif 'email_sent' in session %}
+<div class="alert alert-success alert-dismissible">
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    {{ session.pop('email_sent', None) }} was sent.
+</div>
+{% elif 'error_sending_email' in session %}
+<div class="alert alert-danger alert-dismissible">
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    {{ session.pop('error_sending_email', None) }} was not sent.
+</div>
 {% endif %}
 <h1 class="display-4"><b>Feedbacks</b></h1>
 
@@ -32,6 +42,7 @@
             <th>Email</th>
             <th>Feedback</th>
             <th></th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -41,6 +52,7 @@
             <td>{{ feedback.get_name() }}</td>
             <td>{{ feedback.get_email() }}</td>
             <td style="white-space: normal; width: auto; word-wrap: break-word;">{{ feedback.get_feedback() }}</td>
+            <td><a href="/replyFeedback" class="btn btn-secondary">Reply</a></td>
 
             <td>
                 <form action="{{url_for('delete_feedback', id=feedback.get_feedback_id())}}" method="POST">

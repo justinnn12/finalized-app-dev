@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file, make_response, flash, session, jsonify
-from Forms import CreateProductForm, CreateFeedbackForm, CreateItemForm
+from flask_mail import Mail, Message
+
+from Forms import CreateProductForm, CreateFeedbackForm, CreateReplyFeedbackForm, CreateItemForm
+
 from wtforms import StringField, TextAreaField, SelectField, validators
 from datetime import datetime
 from flask_wtf import FlaskForm
@@ -598,6 +601,7 @@ def delete_order(order_number):
         flash('Order not found', 'error')
     return redirect(url_for('customer_details'))
 
+
     # chun kiat codes ----------------------------------------->
 
 
@@ -659,6 +663,40 @@ def delete_feedback(id):
     session['feedback_deleted'] = 'feedback'
 
     return redirect(url_for('retrieve_feedbacks'))
+
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'karangguni9@gmail.com'
+app.config['MAIL_PASSWORD'] = 'mcvh atbd gtoc wlip'
+app.config['MAIL_DEFAULT_SENDER'] = 'karangguni9@gmail.com'
+
+mail = Mail(app)
+
+
+@app.route('/replyFeedback', methods=['POST', 'GET'])
+def reply_feedback():
+    create_reply_feedback_form = CreateReplyFeedbackForm(request.form)
+    if request.method == 'POST':
+        subject = request.form['subject']
+        recipient = request.form['recipient_email']
+        message_body = request.form['message']
+
+        msg = Message(subject, recipients=[recipient])
+        msg.body = message_body
+
+        try:
+            mail.send(msg)
+            session['email_sent'] = 'Email'
+            flash('Email sent successfully!', 'success')
+        except Exception as e:
+            session['error_sending_email'] = 'Email'
+            flash(f'Error sending email: {e}', 'error')
+
+        return redirect(url_for('retrieve_feedbacks'))
+    return render_template('replyFeedback.html', form=create_reply_feedback_form)
 
 
 @app.route('/createItem', methods=['GET', 'POST'])
@@ -804,6 +842,11 @@ def export_table():
     else:
         # return error if the format is unsupported
         return 'Unsupported format', 400
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error404.html'), 404
 
 
 if __name__ == '__main__':
